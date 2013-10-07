@@ -1,5 +1,5 @@
-//    co-kc251.lnt
-//    Compiler Options for the Keil C251 Compiler Version 1.0
+//    co-kc251.lnt      -  2/27/2007
+//    Compiler Options for the Keil C51 Compiler Version 8
 //
 //    This file contains options to allow PC-lint to process source
 //    files for your compiler.  It is used as follows:
@@ -8,81 +8,69 @@
 //
 //    You may contact Keil Software, Inc. at:
 //
-//    Phone:  972-312-1107  Fax:  972-312-1159
+//    16990 Dallas Parkway, Suite 120
+//    Dallas, Texas  75248-1903
+//    Phone:  972-735-8052  Fax:  972-735-8052
 //    Sales:  800-348-8051
-//    www.keil.com
 
+-hsb_3           // formatting options required for MicroVision IDE
+-format="*** LINT: %(%f(%l) %)%t %n: %m"
+-width(0,10)     // Don't break lines
 
-//-----------------------------------------------
-//-----------------------------------------------
-+v		// Verbose Mode
--width(0,10)	// Don't break lines (this is required for MicroVision)
--elib(652)	// suppress message about #define of earlier declared symbols
--elib(762)   	// suppress message about multiple identical declarations
--elib(760)   	// suppress message about multiple identical macro defs
+	    // while processing compiler (library) header files ...
+-wlib(1)    // sets the warning level within library headers to 1
+	    // (no warnings, just syntax errors).  Comment out if you
+	    // are actually linting library headers.  This
+	    // option makes obsolete options of the form -elib(axxx) where
+	    // xxx >= 400 which may be retained for historical reasons.
++v
+-elib(652)   // suppress message about #define of earlier declared symbols
+-elib(762)   // suppress message about multiple identical declarations and
+-elib(760)   // suppress message about multiple identical macro defs
++rw(_bit)                 // activate the _bit datatype
++rw(bool)                 // activate the bool datatype
+-dbit=bool                // #define bit as bool
++rw(_gobble)              // activate the _gobble keyword
+                          // causes _gobble token to be both ignored
+-dinterrupt=_gobble       // defines interrupt to be a _gobble
+-dusing=_gobble           // defines using to be a _gobble
+-d_at_=@                  // defines _at_ to be @
+-si2                      // integer size: 2 bytes
+-sp2                      // pointer size: 2 bytes, Tiny  Memory Model;
++rw(_ignore_init)         // activate this keyword
++rw(__declspec)           // activate this MS keyword
+-d"sbit=__declspec(selectany) bool" // the __declspec(selectany) has the ...
+-d"sfr=__declspec(selectany) unsigned char"     // effect of allowing ...
+-d"sfr16=__declspec(selectany) unsigned short"  // multiple definitions.
 
-//-----------------------------------------------
-//-----------------------------------------------
 -e34    // ignore complaints about non-constant initializers.
-        // this is because of things like: sbit  ResetClock = P3^3;
+        // this is because of things like:
+        // sbit  ResetClock = P3^3;
+-e430   // ignore complaints about @ mask for function definitions.
 -e557   // ignore complaints about not recognizing printf formats
--e537	// ignore repeated include file,some time we need remove it.
-//-----------------------------------------------
-// Enable near and far pointers and bit types
-//-----------------------------------------------
-+rw(far,near)
+//-sp3    // size of generic pointer is 3 bytes
+-e537	// ignore repeated include file
+-e46	// field type should be _Bool
+-e766	// Header file
+-e845	// 'ptr+int' is certain to be 0
+-e641	// Converting enum to int
++rw(xdata,pdata,data,bdata,idata,code)   // ignore these keywords
++rw(small,compact,large,alien)
 
-+rw(_bit)               // activate the _bit datatype
--dbit=_bit              // #define bit as _bit
+-dreentrant=    // ignore reentrant
 
-//-sp3    		// size of generic pointer is 3 bytes
--sp2    		// size of generic pointer is 2 bytes
--spF3   		// size of far pointer is 3 bytes
--spN2   		// size of near pointer is 2 bytes
++d__MODEL__=0     // set memory model to small
++d__C251__=402    // set C251 compiler version to 4.02
++d__DATE__="09/05/95" // set C51 compiler date macro
++d__TIME__="11:55:00" // set C51 compiler time macro
++d__FILE__="MYFILE.C" // set C51 compiler file macro
++d__LINE__=100        // set C51 compiler line macro
++d__STDC__=1          // set C51 compiler STDC macro
 
-//-----------------------------------------------
-// Define keywords that require an argument
-//-----------------------------------------------
-+rw(_gobble)            // activate the _gobble keyword
-                        // causes _gobble token to be both ignored
-
--dinterrupt=_gobble     // ignore "interrupt n" in func definition
--dusing=_gobble         // ugnore "using n" in func definition
--d_at_=_gobble		// ignore "_at_ n" in var definition
--d_task_=_gobble	// ignore "_task_ n" in func definition
--d_priority_=_gobble	// ignore "_priority_ n" in func definition
-
--d"sbit=unsigned char"		// nearest approximation
--d"sfr=unsigned char"   	// nearest approximation
--d"sfr16=unsigned short"	// nearest approximation
-
-//-----------------------------------------------
-// Define keywords for other special stuff
-//-----------------------------------------------
-+rw(bdata, data, idata, code, pdata, xdata)
-+rw(small, compact, large)
-+rw(alien, reentrant)
-
-//-----------------------------------------------
-// Setup compiler defines
-//-----------------------------------------------
-+d__C251__=110    	// set C51 compiler version to 1.10
-+d__DATE__="07/01/96" 	// set C51 compiler date macro
-+d__FILE__="MYFILE.C" 	// set C51 compiler file macro
-+d__LINE__=100        	// set C51 compiler line macro
-+d__MODEL__=0     	// set memory model to small
-+d__TIME__="11:55:00" 	// set C51 compiler time macro
-+d__STDC__=1          	// set C51 compiler STDC macro
-
-//-----------------------------------------------
-//But since these types take initializers,
-//objects like those below are considered to be
-//multiply defined if they appear in more than
-//one module.  Ergo we suppress 14 -
-//Multiply-defined.  Oh what a tangled web we
-//weave ...
-//-----------------------------------------------
-
+    // But since these types take initializers, objects like those
+    // below are considered to be multiply defined if they appear in
+    // more than one module.  Ergo we suppress 14 - Multiply-defined.
+    // Oh what a tangled web we weave ...
 -esym(14,AA,AC,ACC,ACH0,ACH1,ACH2,ACH3,ACMP,ADCH,ADCON,ADCON0)
 -esym(14,ADCON1,ADDAT,ADEX,ADM,ADR0,ADR1,ADR2,ADR3,ADRES,ADRES0,ADRES1)
 -esym(14,ADRES2,ADRES3,ADRES4,ADRES5,ADRES6,ADRES7,AE,AMSK0,AMSK1,ARCON,AUXR)
@@ -138,3 +126,5 @@
 -esym(534,printf,putchar,puts,scanf,sprintf,sscanf,strcat,strcpy)
 -esym(534,strncat,strncpy,unlink,write)
 
+-emacro(413,offsetof)  // use of NULL pointer creates a stir
+-emacro(545,offsetof)  // addressing an array member is OK

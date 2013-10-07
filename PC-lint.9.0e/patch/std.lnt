@@ -1,0 +1,8 @@
+//  Keil C251 compiler, -mP -si2 -spN2 -spF4, 
+//  Standard lint options
+
+
+co-kc251.lnt
+
+options.lnt  -mP -si2 -spN2 -spF4
+
