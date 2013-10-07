@@ -1,0 +1,86 @@
+                             Using TELLME
+                             ------------
+
+              Copyright 1996 by Phar Lap Software, Inc.
+
+
+TELLME is a utility that produces a report describing the system on
+which it is run.  TELLME provides information on the CPU, BIOS, DOS,
+environment, extended memory, XMS, EMS, VCPI, DPMI, and so on.  The
+utility provides a complete picture of a system so that compatibility
+problems can be resolved.  TELLME provides the following information
+about a system:
+
+o   Type of CPU and numeric coprocessor
+o   Information about the DOS version being run
+o   Information about the BIOS ROM being used
+o   A print out of the CONFIG.SYS and AUTOEXEC.BAT files
+o   A list of important environment variables for TNT DOS-Extender
+    (PATH, LIBPATH, LIB, INCLUDE etc.)
+o   Information about various extended memory allocators (INT 15H, XMS, 
+    EMS/VCPI, VDS, and DPMI)
+o   Presence of Windows, DESQview, SHARE, and DOS extenders.
+o   Statistics about the TNT.EXE file 
+o   Conventional memory usage
+
+TELLME runs in real mode. 
+
+For example, if you have two megabytes of memory, yet receive
+"insufficient memory" messages from a DOS-Extended application built
+with TNT DOS-Extender, you can run TELLME to see what the problem is:
+
+C:\>tellme > tellme.log
+
+TELLME.LOG might, for instance, show that an XMS extended-memory manager
+is present, but that no XMS memory is available:
+
+-----XMS-------------------------------------------------------
+XMS version.....................................2.0
+Driver version..................................2.96
+HMA.............................................Present
+A20.............................................Off
+Size of largest XMS block.......................0K bytes
+Total free XMS memory...........................0K bytes
+
+One situation in which this might happen is you are running under
+Windows 3 Standard or Real mode, but have not set the "KB Limit" in the
+XMS Memory section of an appropriate Windows .PIF (Program Information)
+file.  The result is that DOS-extended applications can't get any
+extended memory.  In any case, TELLME can tell you what's going on.
+
+If you have isolated a problem to a particular area, you can tell TELLME
+to only run certain tests.  For example, the following runs only the XMS
+test:
+
+C:\>tellme -xms > tellme.log
+
+A complete list of TELLME switches is provided by running TELLME -HELP.
+Rather than run the entire TELLME test suite, selected portions can be
+turned on or off.  A complete list of TELLME switches is provided by
+running TELLME -HELP or TELLME -?:
+
+C:\>tellme -?
+TELLME [switches]
+    -CPU                 Perform CPU test
+    -BIOS                Perform BIOS test
+    -DOS                 Perform DOS test
+    -MEM                 Perform conventional memory test
+    -CONFIG              Print out CONFIG.SYS
+    -AUTOEXEC            Print out AUTOEXEC.BAT
+    -ENV                 Print out important environment variables
+    -INT15               Perform INT 15 extended memory test
+    -XMS                 Perform XMS test
+    -EMS or -VCPI        Perform EMS test
+    -VDS                 Perform VDS test
+    -DPMI                Perform DPMI test
+    -FILE                Print out DOS-Extender version information
+    -MOUSE               Perform mouse test
+    -RUN                 Run the DOS-Extender
+Placing a "NO" in front a of switch disables a test.  Example: -NOEMS
+
+If all the TELLME tests run properly, then an application built with TNT
+DOS-Extender should also run properly in the same configuration.  This
+makes TELLME a useful test of TNT DOS-Extender compatibility.
+
+                               - END -
+

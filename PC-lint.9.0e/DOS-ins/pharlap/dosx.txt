@@ -1,0 +1,260 @@
+This file documents the TNT DOS-Extender switches most likely to be
+of use to end-users.  You may distribute all or any portion of this file 
+with your bound product that incorporates TNT DOS-Extender.  You may also 
+incorporate all or any portion of this file into your product documentation 
+or on-line help.
+
+
+Setting TNT DOS-Extender Switches in a Bound Application
+--------------------------------------------------------
+
+There are two ways you can give your customers the ability to set
+TNT DOS-Extender switches in your bound application:  the CFIG386
+utility, and a DOS environment variable.
+
+
+The CFIG386 Utility
+-------------------
+
+You may distribute the CFIG386.EXE utility to end users when it is included
+with your bound application.  Use the CFIG386 utility to add TNT DOS-Extender
+switches to a bound application as follows:
+
+	cfig386 <appl file name> <new switches>
+
+For example, to add the switch -MAXXMSMEM 100000h to the bound application 
+program EATMEM.EXE:
+
+	cfig386 eatmem -maxxmsmem 100000h
+
+To view all currently configured-in TNT DOS-Extender switches, just run
+CFIG386 with no switches:
+
+	cfig386 eatmem
+
+To clear out all currently configured-in switches in the application,
+enter the switch -CLEAR BEFORE the application name on the command line:
+
+	cfig386 -clear eatmem
+
+
+Switches in an Environment Variable
+-----------------------------------
+
+Using an environment variable is usually a better method for giving
+end users the ability to specify TNT DOS-Extender switches.  It's simpler
+to explain, and if you have your own TNT DOS-Extender switches configured
+into your bound application, you don't run the risk of the end user
+removing them by typing "cfig386 -clear."
+
+To select an environment variable to contain TNT DOS-Extender switches,
+configure the string "%varname" into the bound application, where "varname"
+is the name of the environment variable.  A good choice for an environment
+variable name is the name of your application program.  For example, if
+your application is called DATABASE.EXE and you want to give users the
+ability to specify TNT DOS-Extender switches in an environment variable
+called database, configure in "%database":
+
+	cfig386 database %database
+
+The end user can then specify the switch -MAXVCPIMEM 100000h by typing
+the DOS command:
+
+	set database=-maxvcpimem 100000h
+
+If the environment variable "database" does not exist, TNT DOS-Extender
+ignores it and runs normally.
+
+
+TNT DOS-Extender Command Line Switches Descriptions
+---------------------------------------------------
+
+The switches described below are TNT DOS-Extender switches that may be
+useful to end-users.  Optional characters in the switch are enclosed
+in brackets.  Numbers entered as switch parameters are base 10 by
+default;  they may be entered in hexadecimal (base 16) by appending the
+character 'h' to the number (e.g., -MINREAL 4096 and -MINREAL 1000h
+are equivalent).
+
+Weitek 1167/3167/4167 Coprocessor Detection
+-------------------------------------------
+-WEITEK ON
+	TNT DOS-Extender automatically detects a Weitek coprocessor by
+	making a Weitek-approved BIOS detection call.  Some machines have
+	BIOSes that do not support this detection call, with the result
+	that TNT DOS-Extender thinks there is no Weitek coprocessor when
+	in fact one is installed.  If the application program requires
+	a Weitek coprocessor, and is refusing to run because it thinks
+	one is not present, use the -WEITEK ON switch to inform 
+	TNT DOS-Extender that a Weitek coprocessor is actually present.
+
+Cyrix EMC87 Coprocessor Detection
+---------------------------------
+-CYRIX ON
+	TNT DOS-Extender automatically detects a Cyrix EMC87 coprocessor
+	(which can be programmed both with normal 80387 instructions, and
+	via a high performance memory-mapped interface).  The detection
+	check is extremely reliable, but the -CYRIX ON switch is available
+	to force detection of the Cyrix EMC87 in the unlikely event it
+	is not automatically recognized.
+
+Avoiding 386 B1 Stepping Paging Erratum, with 386|VMM
+-----------------------------------------------------
+-ERR[ATA17]
+	There are two paging errata on the B1 stepping of the 80386 chip.
+	They both cause the machine to hang when running a program that
+	uses 80387 floating point instructions in protected mode.  Both
+	errata are dependent on timing factors and the same program may
+	hang in different places or not hang at all in successive runs.
+
+	If the application program is bound with 386|VMM (uses virtual
+	memory), and it is possible to reboot the machine with
+	CTRL-ALT-DEL after it hangs, use the -ERRATA17 switch to enable
+	a software workaround to the chip erratum.
+
+	The other paging erratum (known as erratum 21) has no viable
+	software workaround, and can occur regardless of whether 386|VMM
+	is used.  The symptom of erratum 21 is that the machine cannot
+	be rebooted with CTRL-ALT-DEL after it hangs.  A hardware workaround
+	for erratum 21, in the form of a circuit board that goes between
+	the 386 chip and the socket on the motherboard, is available
+	from Intel.  Upgrading to a D0 step 386 chip also solves the problem.
+
+Limiting Total Program Memory Usage
+-----------------------------------
+-MAXP[GMMEM] nbytes
+	The -MAXPGMMEM switch limits the maximum amount of memory allocated
+	to the application program.  If the program does not use 386|VMM,
+	it limits the amount of physical memory consumed by the program.
+	If the program does use 386|VMM, it limits the total amount of
+	physical memory plus disk space for the swap file.  If you limit
+	a program's memory consumption too much, it may not be able to run.
+
+Leaving Conventional Memory Free
+--------------------------------
+-MINR[EAL] nparas
+-MAXR[EAL] nparas
+	By default, TNT DOS-Extender allocates all conventional memory
+	(memory below 640K) for use by the application program, leaving none
+	available for use by other programs.  The conventional memory is
+	all freed again when the application program terminates.  Most
+	applications that allow other programs to run (e.g., with an
+	"execute DOS command" option) make sure there is enough conventional
+	memory available to run the other program.  However, if 
+	insufficient conventional memory is available, the -MINREAL and
+	-MAXREAL switches can be used to limit the conventional memory
+	used for the application program when it is initially loaded.
+	
+	The -MINREAL switch requires that at least the specified number of
+	16-byte paragraphs of memory must be left free, available for
+	use by other programs.  For example, -MINREAL 1000h leaves 
+	64 KB (4K paragraphs) of memory free.
+
+	The -MAXREAL switch is a request rather than a requirement;  it leaves
+	as much conventional memory free as possible, up to the specified
+	number of 16-byte paragraphs.  However, the minimum load-time memory 
+	requirements of the application program override the value specified
+	with -MAXREAL.  Using the -MAXREAL FFFFh switch (requesting 1 MB of
+	conventional memory be left free) will cause TNT DOS-Extender to
+	leave as much conventional memory free as possible.
+
+Leaving Extended Memory Free
+----------------------------
+-MAXBL[KXMS] nbytes
+	XMS memory is allocated in blocks;  because the total number of
+	available blocks is limited, by default TNT DOS-Extender always
+	allocates the largest available block when more memory is needed
+	for the application program.  This may result in one program
+	consuming all available memory, even though it doesn't need it all.
+	Under Windows 3.x, for example, this could mean one protected 
+	mode application takes all the XMS memory and no programs in
+	other windows can get memory.  The -MAXBLKXMS switch limits the
+	maximum size of each allocated XMS block.  The smaller the size
+	of each block, the less memory will potentially be needlessly
+	allocated.  But if you make the block size too small, you risk
+	running out of XMS handles because too many XMS blocks get
+	allocated.  If you need to use the -MAXBLKXMS switch to leave
+	XMS memory free for other programs, use a fairly large block
+	size such as 256K or 512K, and use the /numhandles=128 switch on
+	the HIMEM.SYS driver when it is installed in CONFIG.SYS
+
+-MAXV[CPIMEM] nbytes
+-MAXX[MSMEM] nbytes
+-MAXE[XTMEM] nbytes
+	By default, all available extended memory is allocated for the
+	application program as it is needed.  These switches can be used
+	to limit consumption of extended memory from a specific source,
+	thus leaving memory available for other programs.  Of course,
+	limiting memory usage too severely may result in the application
+	program being unable to run.
+
+	The -MAXVCPIMEM switch limits consumption of memory from an EMS
+	emulator with the VCPI interface to the specified number of bytes.
+
+	The -MAXXMSMEM switch limits consumption of memory from an XMS
+	driver (HIMEM.SYS) to the specified number of bytes.
+
+	The -MAXEXTMEM switch limits consumption of extended memory allocated
+	directly by TNT DOS-Extender (rather than through the VCPI or XMS
+	interfaces) to the specified number of bytes.
+
+Avoiding Programs That Incorrectly Mark Extended Memory Usage
+-------------------------------------------------------------
+-VDISK
+	Older VDISK (RAM disk) programs mark their usage of extended memory
+	in two locations.  Some programs mark only one location and not the
+	other, or occasionally a second program wipes out one of the marks.
+	If TNT DOS-Extender sees two different size values in the two marker
+	locations, it prints out an error message identifying the two size
+	values.  The -VDISK switch tells TNT DOS-Extender to use the larger
+	of the two size marks and proceed normally.  Alternatively, the
+	-EXTLOW switch can be used to give TNT DOS-Extender the correct
+	low threshold in extended memory (the VDISK marking standard always
+	allocates extended memory from 1 MB up).
+
+-EXTL[OW] address
+-EXTH[IGH] address
+	Some older programs use extended memory without marking their use of
+	it.  If you are using such a program, and you know which address
+	range in extended memory it uses, you can use the -EXTLOW and
+	-EXTHIGH switch to limit the address range TNT DOS-Extender uses
+	in extended memory so conflicts will not occur.  For example, the
+	switch settings "-EXTLOW 200000h -EXTHIGH 400000h" limit 
+	extended memory usage by TNT DOS-Extender to the range 2 MB - 4 MB.
+
+Running on a 386 Chip with the 32-bit MULtiply Erratum
+------------------------------------------------------
+-NOMUL
+	Some B1 stepping 386 chips have an erratum that causes incorrect
+	results from the MUL instruction when multiplying certain values.
+	If TNT DOS-Extender detects this erratum, it prints an error message
+	and refuses to run the program.  The -NOMUL switch can be used
+	to force TNT DOS-Extender to run the program.  Before using the 
+	-NOMUL switch, you should check with the application developer
+	to make sure the application does not use the 32-bit MUL instruction
+	(TNT DOS-Extender does not use the instruction).
+
+Obtaining Debug Information When Programs Don't Work
+----------------------------------------------------
+-DEBUG 3
+	The -DEBUG 3 switch enables debug printout by TNT DOS-Extender
+	during program initialization.  It is useful for helping to
+	track down problems that occur before the application program
+	is loaded.  If you think you are encountering such a problem, use
+	the -DEBUG 3 switch and redirect the output to a file, and then
+	send the printout to the application developer for diagnosis.
+
+-COM1 
+-COM2
+-BAUD 9600
+	If the machine reboots when you run the application, and you can't
+	obtain all the information printed out by the -DEBUG switch, try
+	redirecting the debug output to a serial I/O port.  Connect the
+	serial port to a dumb terminal or another PC running a terminal
+	emulator program.  The -COM1 switch redirects I/O to serial port 1,
+	-COM2 to serial port 2.  Use the DOS MODE command to set the 
+	desired port parameters before running the program, or use the
+	-BAUD switch to set the port parameters to 8 data bits, 1 stop
+	bit, no parity, and the specified baud rate.  You can use
+	CTRL-S and CTRL-Q at the remote terminal to stop and start the
+	debug printout.

@@ -1,0 +1,130 @@
+                            Using CFIG386
+                            -------------
+
+              Copyright 1996 by Phar Lap Software, Inc.
+
+
+CFIG386 allows TNT DOS-Extender switches to be configured into a
+DOS-extended program.  TNT DOS-Extender switches are described in the
+document DOSX.TXT. This document describes how to use CFIG386 to set TNT
+DOS-Extender switches so that they are used each time you run a
+DOS-extended program.
+
+As an example, if APROGRAM.EXE is a DOS-extended program, and if you
+want it to use the -BANNER switch, then type the following DOS command
+line (this assumes that both CFIG386.EXE and APROGRAM.EXE are in the
+APROGRAM subdirectory):
+
+C:\APROGRAM>cfig386 aprogram.exe -banner
+
+With square brackets such as [this] indicating optional parameters and
+angle brackets such as <this> indicating required parameters, the
+CFIG386 syntax is this:
+    
+CFIG386 [-dosxname dosx] [-clear] <exe_file_name> [new_switches]
+
+Note that new switches such as -BANNER come *after* the name of the
+DOS-extended program.  CFIG386 switches such as -DOSXNAME or -CLEAR come
+before the name of the executable.
+
+The current switches in a program can be displayed by running CFIG386
+without any command-line arguments:
+
+C:\APROGRAM>cfig386 aprogram.exe
+CFIG386: 8.0 -- Copyright (C) 1986-96 Phar Lap Software, Inc.
+
+Phar Lap program type: TNT DOS-Extender Stub Loader Version 8.0
+Program run by this loader: tnt.exe
+Configured switch values:
+        -banner
+
+
+Switches can be completely cleared from the program by using the CFIG386
+-CLEAR switch:
+
+C:\APROGRAM>cfig386 -clear aprogram.exe 
+
+NOTE!!  If your DOS-extended application was shipped with switches
+already configured in, do not use the -CLEAR switch except as instructed
+by the application developer.
+
+If you try to run CFIG386 on a program that does not contain a bound-in
+DOS extender, you will receive a rather cryptic error message such as:
+
+C:\>cfig386 hello.exe
+CFIG386: 8.0 -- Copyright (C) 1986-96 Phar Lap Software, Inc.
+
+CFIG386: Invalid config block signature: 0000 in image #1 of: hello.exe
+
+or:
+
+C:\>cfig386 command.com
+CFIG386: 8.0 -- Copyright (C) 1986-96 Phar Lap Software, Inc.
+
+CFIG386: Unknown executable file signature: 2DE9 in program #1 of: command.com
+
+Note that CFIG386 only configures in TNT DOS-Extender switches, that is,
+those switches described in DOSX.TXT. Any application-specific switches
+are a completely separate issue.
+
+
+                          Replacing Switches
+                          ------------------
+
+Note that CFIG386 does not "understand" TNT switches, and merely places
+them into the target executable.  This means that switches are additive;
+to replace switches, you must use CFIG386 -CLEAR and then start again.
+For example, what happens if you misspell a switch?:
+
+C:\APROGRAM>cfig386 aprogram.exe -barner      ! oops
+CFIG386: 8.0 -- Copyright (C) 1986-96 Phar Lap Software, Inc.
+
+Phar Lap program type: TNT DOS-Extender Stub Loader Version 8.0
+Program run by this loader: tnt.exe
+Configured switch values:
+        -banner
+
+C:\APROGRAM>cfig386 aprogram.exe -banner
+CFIG386: 8.0 -- Copyright (C) 1986-96 Phar Lap Software, Inc.
+
+Phar Lap program type: TNT DOS-Extender Stub Loader Version 8.0
+Program run by this loader: tnt.exe
+Configured switch values:
+        -barner
+        -banner
+
+As you can see, -BANNER did not replace -BARNER. Instead, *both* are now
+configured into the file:
+
+If you now tried to use TNT, it would complain about the bogus -BARNER
+switch.  You need to use CFIG386 -CLEAR:
+
+C:\>cfig386 -clear aprogram.exe
+CFIG386: 8.0 -- Copyright (C) 1986-96 Phar Lap Software, Inc.
+
+Phar Lap program type: TNT DOS-Extender Stub Loader Version 8.0
+Program run by this loader: tnt.exe
+Configured switch values:  None.
+
+C:\>cfig286 aprogram.exe -banner
+CFIG386: 8.0 -- Copyright (C) 1986-96 Phar Lap Software, Inc.
+
+Phar Lap program type: TNT DOS-Extender Stub Loader Version 8.0
+Program run by this loader: tnt.exe
+Configured switch values:
+        -banner
+
+NOTE!!  If your DOS-extended application was shipped with switches
+already configured in, do not use the -CLEAR switch except as instructed
+by the application developer.
+    
+
+                        Other CFIG386 Switches
+                        ----------------------
+
+The names of several other switches (-FIRST, -ALL, -LAST, and -IMAGE)
+are displayed by the CFIG386 usage message.  These switches are not
+needed for configuring bound applications.
+
+                            - END -
+
